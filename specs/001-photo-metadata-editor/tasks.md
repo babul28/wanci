@@ -7,13 +7,13 @@
 
 **Purpose**: Initialize the browser-only frontend app and create the base project structure.
 
-- [ ] T001 Create `src/` and `tests/` structure with `src/App.tsx`, `src/main.tsx`, `src/styles/index.css`, `tests/unit/`, and `tests/integration/`
-- [ ] T002 Add Vite, React, TypeScript, Tailwind CSS, `vitest`, and `@testing-library/react` to `package.json`
-- [ ] T003 Create `tsconfig.json`, `vite.config.ts`, `tailwind.config.js`, and `postcss.config.js` at the repository root
-- [ ] T004 Create `src/types/index.ts` with `UploadedPhoto`, `OverlayMetadata`, and `ExportResult` type definitions
-- [ ] T005 Create `src/utils/imageProcessing.ts` and `src/utils/validation.ts` placeholders for browser export and input validation logic
-- [ ] T006 Create component skeleton files at `src/components/ImageUploader.tsx`, `src/components/MetadataEditor.tsx`, `src/components/PreviewCanvas.tsx`, and `src/components/DownloadControls.tsx`
-- [ ] T007 Create root styling in `src/styles/index.css` for a clean minimal UI and basic responsive layout
+- [x] T001 Create `src/` and `tests/` structure with `src/App.tsx`, `src/main.tsx`, `src/styles/index.css`, `tests/unit/`, and `tests/integration/`
+- [x] T002 Add Vite, React, TypeScript, Tailwind CSS, `vitest`, and `@testing-library/react` to `package.json`
+- [x] T003 Create `tsconfig.json`, `vite.config.ts`, `tailwind.config.js`, and `postcss.config.js` at the repository root
+- [x] T004 Create `src/types/index.ts` with `UploadedPhoto`, `OverlayMetadata`, and `ExportResult` type definitions
+- [x] T005 Create `src/utils/imageProcessing.ts` and `src/utils/validation.ts` placeholders for browser export and input validation logic
+- [x] T006 Create component skeleton files at `src/components/ImageUploader.tsx`, `src/components/MetadataEditor.tsx`, `src/components/PreviewCanvas.tsx`, and `src/components/DownloadControls.tsx`
+- [x] T007 Create root styling in `src/styles/index.css` for a clean minimal UI and basic responsive layout
 
 ---
 
@@ -21,14 +21,14 @@
 
 **Purpose**: Implement shared logic and UI contracts that all user stories depend on.
 
-- [ ] T008 Implement `src/types/index.ts` state and entity types used across upload, preview, edit, and export flows
-- [ ] T009 [P] Implement `src/utils/validation.ts` with timestamp and location coordinate validation rules and clear error messages
-- [ ] T010 [P] Implement `src/utils/imageProcessing.ts` to render the uploaded image to a canvas, apply overlay text, and export a `Blob` preserving the original MIME type
-- [ ] T011 [P] Implement `src/components/ImageUploader.tsx` with JPEG/PNG acceptance, upload state handling, and unsupported file feedback
-- [ ] T012 [P] Implement `src/components/PreviewCanvas.tsx` to render the loaded image and overlay metadata for preview
-- [ ] T013 Implement `src/components/DownloadControls.tsx` with a download button that triggers client-side export when the image is ready
-- [ ] T014 Implement `src/components/MetadataEditor.tsx` with form fields for timestamp and location input and inline validation placeholders
-- [ ] T015 Configure `src/App.tsx` to orchestrate uploaded photo state, metadata state, validation errors, preview rendering, and export readiness
+- [x] T008 Implement `src/types/index.ts` state and entity types used across upload, preview, edit, and export flows
+- [x] T009 [P] Implement `src/utils/validation.ts` with timestamp and location coordinate validation rules and clear error messages
+- [x] T010 [P] Implement `src/utils/imageProcessing.ts` to render the uploaded image to a canvas, apply overlay text, and export a `Blob` preserving the original MIME type
+- [x] T011 [P] Implement `src/components/ImageUploader.tsx` with JPEG/PNG acceptance, upload state handling, and unsupported file feedback
+- [x] T012 [P] Implement `src/components/PreviewCanvas.tsx` to render the loaded image and overlay metadata for preview
+- [x] T013 Implement `src/components/DownloadControls.tsx` with a download button that triggers client-side export when the image is ready
+- [x] T014 Implement `src/components/MetadataEditor.tsx` with form fields for timestamp and location input and inline validation placeholders
+- [x] T015 Configure `src/App.tsx` to orchestrate uploaded photo state, metadata state, validation errors, preview rendering, and export readiness
 
 ---
 
@@ -38,11 +38,11 @@
 
 **Independent Test**: Upload a supported JPEG/PNG photo, set timestamp/location values, download the edited photo, and verify the overlay is visible while the resolution is preserved.
 
-- [ ] T016 [P] [US1] Implement file selection and supported-format validation in `src/components/ImageUploader.tsx`
-- [ ] T017 [US1] Implement display of the uploaded image preview and overlay values in `src/App.tsx`
-- [ ] T018 [US1] Implement download export trigger in `src/components/DownloadControls.tsx`
-- [ ] T019 [US1] Implement the export flow in `src/utils/imageProcessing.ts` to preserve the original image file format when exporting
-- [ ] T020 [US1] Add integration test `tests/integration/upload-export.test.ts` covering upload, preview, overlay application, and download readiness
+- [x] T016 [P] [US1] Implement file selection and supported-format validation in `src/components/ImageUploader.tsx`
+- [x] T017 [US1] Implement display of the uploaded image preview and overlay values in `src/App.tsx`
+- [x] T018 [US1] Implement download export trigger in `src/components/DownloadControls.tsx`
+- [x] T019 [US1] Implement the export flow in `src/utils/imageProcessing.ts` to preserve the original image file format when exporting
+- [x] T020 [US1] Add integration test `tests/integration/upload-export.test.ts` covering upload, preview, overlay application, and download readiness
 
 ---
 
@@ -52,11 +52,11 @@
 
 **Independent Test**: Upload a photo, change timestamp and coordinates, and verify the preview updates before download.
 
-- [ ] T021 [P] [US2] Implement timestamp input and inline validation in `src/components/MetadataEditor.tsx`
-- [ ] T022 [P] [US2] Implement location coordinate input and inline validation in `src/components/MetadataEditor.tsx`
-- [ ] T023 [US2] Implement metadata state updates and preview refresh logic in `src/App.tsx`
-- [ ] T024 [P] [US2] Add unit test coverage in `tests/unit/validation.test.ts` for timestamp and location validation behavior
-- [ ] T025 [US2] Add integration test `tests/integration/edit-preview.test.ts` verifying preview updates when timestamp or location values change
+- [x] T021 [P] [US2] Implement timestamp input and inline validation in `src/components/MetadataEditor.tsx`
+- [x] T022 [P] [US2] Implement location coordinate input and inline validation in `src/components/MetadataEditor.tsx`
+- [x] T023 [US2] Implement metadata state updates and preview refresh logic in `src/App.tsx`
+- [x] T024 [P] [US2] Add unit test coverage in `tests/unit/validation.test.ts` for timestamp and location validation behavior
+- [x] T025 [US2] Add integration test `tests/integration/edit-preview.test.ts` verifying preview updates when timestamp or location values change
 
 ---
 
@@ -66,10 +66,10 @@
 
 **Independent Test**: Compare the downloaded edited image to the original image for matching resolution and acceptable visual clarity.
 
-- [ ] T026 [P] [US3] Enhance `src/utils/imageProcessing.ts` to export images at original resolution and use the same MIME type for JPEG/PNG
-- [ ] T027 [US3] Enhance `src/components/PreviewCanvas.tsx` so preview rendering matches export quality and positioning of the overlay
-- [ ] T028 [US3] Add integration test `tests/integration/export-quality.test.ts` verifying exported image resolution and format preservation
-- [ ] T029 [P] [US3] Add unit test coverage in `tests/unit/imageProcessing.test.ts` for quality-preserving export behavior
+- [x] T026 [P] [US3] Enhance `src/utils/imageProcessing.ts` to export images at original resolution and use the same MIME type for JPEG/PNG
+- [x] T027 [US3] Enhance `src/components/PreviewCanvas.tsx` so preview rendering matches export quality and positioning of the overlay
+- [x] T028 [US3] Add integration test `tests/integration/export-quality.test.ts` verifying exported image resolution and format preservation
+- [x] T029 [P] [US3] Add unit test coverage in `tests/unit/imageProcessing.test.ts` for quality-preserving export behavior
 
 ---
 
@@ -77,11 +77,11 @@
 
 **Purpose**: Complete the feature with UX polish, documentation, and cross-story quality checks.
 
-- [ ] T030 [P] Update `src/styles/index.css` to improve visual contrast, spacing, and the minimal UI layout
-- [ ] T031 [P] Update `specs/001-photo-metadata-editor/quickstart.md` with any commands or usage details needed for this feature
-- [ ] T032 [P] Update `specs/001-photo-metadata-editor/research.md` or `specs/001-photo-metadata-editor/spec.md` with any implementation notes or clarifications discovered during development
-- [ ] T033 [P] Add accessibility and validation feedback improvements in `src/components/MetadataEditor.tsx` and `src/components/ImageUploader.tsx`
-- [ ] T034 [P] Add cross-cutting error handling for invalid uploads, malformed inputs, and large file warnings in `src/App.tsx`
+- [x] T030 [P] Update `src/styles/index.css` to improve visual contrast, spacing, and the minimal UI layout
+- [x] T031 [P] Update `specs/001-photo-metadata-editor/quickstart.md` with any commands or usage details needed for this feature
+- [x] T032 [P] Update `specs/001-photo-metadata-editor/research.md` or `specs/001-photo-metadata-editor/spec.md` with any implementation notes or clarifications discovered during development
+- [x] T033 [P] Add accessibility and validation feedback improvements in `src/components/MetadataEditor.tsx` and `src/components/ImageUploader.tsx`
+- [x] T034 [P] Add cross-cutting error handling for invalid uploads, malformed inputs, and large file warnings in `src/App.tsx`
 
 ---
 
