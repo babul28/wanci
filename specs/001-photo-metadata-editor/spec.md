@@ -69,7 +69,8 @@ A user wants the edited photo downloaded without a noticeable drop in image qual
 - **FR-004**: Users MUST be able to enter or modify a location coordinate value that will be added to the photo.
 - **FR-005**: System MUST generate a downloadable version of the photo with the timestamp and location overlay applied.
 - **FR-006**: System MUST preserve the original image resolution and visual quality when exporting the edited photo.
-- **FR-007**: System MUST validate user input for timestamp and coordinate fields and provide clear feedback for invalid values.
+- **FR-007**: System MUST preserve the original uploaded image file format on export when the format is supported.
+- **FR-008**: System MUST validate user input for timestamp and coordinate fields and provide clear feedback for invalid values.
 - **FR-008**: System MUST allow users to preview the applied timestamp and location before downloading.
 
 ### Key Entities *(include if feature involves data)*
@@ -95,3 +96,8 @@ A user wants the edited photo downloaded without a noticeable drop in image qual
 - The app does not require user accounts or authentication for this feature.
 - The primary output expectation is a visible timestamp and location overlay on the photo, not only metadata stored separately.
 - If a format does not support exact bit-for-bit preservation, the export should still preserve resolution and avoid perceptible quality loss.
+## Clarifications
+
+### Session 2026-05-19
+
+- Q: Should the application preserve the original image file format on export? → A: Preserve the original image file format exactly on export.
