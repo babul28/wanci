@@ -31,6 +31,11 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
+- Verify code quality expectations are defined.
+- Verify testing standards are mapped to feature scope.
+- Verify user experience consistency and minimal UI rationale.
+- Verify performance goals and constraints are documented.
+
 [Gates determined based on constitution file]
 
 ## Project Structure

@@ -79,7 +79,7 @@
 
 <!--
   ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right functional requirements.
+  Fill them out with the right functional requirements. Include explicit performance and UX consistency requirements when applicable.
 -->
 
 ### Functional Requirements
@@ -103,7 +103,7 @@
 ## Success Criteria *(mandatory)*
 
 <!--
-  ACTION REQUIRED: Define measurable success criteria.
+  ACTION REQUIRED: Define measurable success criteria, including performance targets and user experience consistency.
   These must be technology-agnostic and measurable.
 -->
 

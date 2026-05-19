@@ -1,50 +1,48 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+Version change: placeholder -> 1.0.0
+Modified principles: Added I. Code Quality; II. Testing Standards; III. User Experience Consistency; IV. Minimal UI; V. Performance Expectations
+Added sections: Non-Functional Constraints; Development Workflow
+Removed sections: none
+Templates requiring updates: ✅ .specify/templates/plan-template.md; ✅ .specify/templates/spec-template.md; ✅ .specify/templates/tasks-template.md
+Follow-up TODOs: none
+-->
+# timestamp-adder Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Code Quality
+All code MUST be written for clarity, maintainability, and correctness. Every implementation MUST use consistent naming, modular design, and automated linting or formatting where available. Code reviews MUST verify that changes introduce no unnecessary complexity and preserve long-term readability.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Testing Standards
+Automated tests are mandatory. Every feature MUST include unit tests for core behavior, integration tests for end-to-end correctness, and regression tests for edge cases. Tests MUST be authored before or alongside implementation and MUST fail before the fix is complete.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. User Experience Consistency
+User-facing behavior MUST feel coherent across the tool. Command names, messages, prompts, and status outputs MUST follow a single design vocabulary. Consistent UX is required so users can rely on predictable interactions in a small interface.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Minimal UI
+The interface MUST remain focused, direct, and uncluttered. Only user journeys with clear value are allowed. UI elements, prompts, and options MUST exist only when they reduce effort or prevent mistakes.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Performance Expectations
+The application MUST be fast and efficient in normal usage. Performance budgets, including response time and resource impact, MUST be defined in feature specifications and validated during implementation. The tool MUST not impose avoidable latency or memory overhead.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Non-Functional Constraints
+- Performance budgets and workload constraints MUST be captured in every feature plan.
+- User interface behavior MUST be accessible, predictable, and consistent.
+- Simplicity is required: avoid complexity that does not directly improve task success.
+- Quality gates MUST include linting, testing, and peer review before merge.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
-
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Development Workflow
+- Every change MUST be reviewed against these principles before approval.
+- Feature work MUST begin with a clear spec, include corresponding tests, and end with a compliance check for quality, UX consistency, and performance expectations.
+- Teams MUST document any deviation from the minimal UI or performance goals, including the rationale and mitigation plan.
+- Changes that affect user-visible behavior or performance MUST include measurable acceptance criteria.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+- This constitution is the authoritative guide for `timestamp-adder` design and implementation decisions.
+- Amendments require a documented proposal, review by maintainers or leads, and a recorded migration path for existing implementation and tests.
+- The constitution versioning policy is semantic: major releases only for governance changes that alter principles; minor releases for added guidance or new sections; patch releases for wording and clarifications.
+- Compliance review MUST happen on every pull request that changes functionality, UX, performance constraints, or tests.
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+**Version**: 1.0.0 | **Ratified**: 2026-05-19 | **Last Amended**: 2026-05-19
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
