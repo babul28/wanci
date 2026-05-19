@@ -15,7 +15,7 @@ Build a browser-only photo metadata editor using Vite, React, Tailwind CSS, and 
 **Testing**: `vitest` for unit and integration tests, `@testing-library/react` for UI behavior  
 **Target Platform**: Modern browsers with HTML Canvas and `createImageBitmap` support  
 **Project Type**: Single-page web application  
-**Performance Goals**: Preview updates in under 200ms for standard images; export preserves original resolution and avoids visible quality degradation  
+**Performance Goals**: Preview updates in under 200ms for standard images; export preserves original resolution  
 **Constraints**: Image processing must occur entirely in the browser; the app must preserve original resolution and support JPEG/PNG images without backend dependencies  
 **Scale/Scope**: Single-photo editing workflow only, no batch processing or server-side rendering in v1
 

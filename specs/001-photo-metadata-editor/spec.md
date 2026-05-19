@@ -19,7 +19,7 @@ A user uploads a photo, applies a timestamp and location coordinate overlay, and
 
 1. **Given** a user has a valid photo selected, **When** they upload it, **Then** the app displays the image preview with editable timestamp and location fields.
 2. **Given** the user has entered or updated timestamp and location values, **When** they confirm the changes, **Then** the app generates a downloadable image showing the timestamp and location overlay.
-3. **Given** the user downloads the edited photo, **When** they open the downloaded file, **Then** the image resolution matches the original and there is no visible decrease in quality.
+3. **Given** the user downloads the edited photo, **When** they open the downloaded file, **Then** the image resolution matches the original.
 
 ---
 
@@ -54,7 +54,7 @@ A user wants the edited photo downloaded without a noticeable drop in image qual
 
 ### Edge Cases
 
-- What happens when a user uploads a file format that is unsupported or invalid?
+- How does the system behave when a user uploads an unsupported image format such as WebP, or an otherwise invalid file?
 - How does the system behave when the user provides a malformed timestamp or invalid location coordinates?
 - What happens if the uploaded image file is extremely large or has an unusual aspect ratio?
 - What happens if the user cancels the upload before editing?
@@ -71,7 +71,8 @@ A user wants the edited photo downloaded without a noticeable drop in image qual
 - **FR-006**: System MUST preserve the original image resolution and visual quality when exporting the edited photo.
 - **FR-007**: System MUST preserve the original uploaded image file format on export when the format is supported.
 - **FR-008**: System MUST validate user input for timestamp and coordinate fields and provide clear feedback for invalid values.
-- **FR-008**: System MUST allow users to preview the applied timestamp and location before downloading.
+- **FR-009**: System MUST allow users to preview the applied timestamp and location before downloading.
+- **FR-010**: System MUST reject unsupported upload formats such as WebP and display a clear validation error for unsupported or invalid files.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -85,7 +86,7 @@ A user wants the edited photo downloaded without a noticeable drop in image qual
 ### Measurable Outcomes
 
 - **SC-001**: Users can complete the upload, edit, and download flow in under 2 minutes for a normal photo.
-- **SC-002**: At least 95% of supported uploaded photos export with the same resolution and no visible quality degradation.
+- **SC-002**: At least 95% of supported uploaded photos export with the same resolution as the original photo.
 - **SC-003**: 90% of users successfully add or update both timestamp and location overlay on the first attempt.
 - **SC-004**: The app provides clear validation feedback for invalid timestamp or location inputs in at least 95% of invalid-entry cases.
 
@@ -101,3 +102,5 @@ A user wants the edited photo downloaded without a noticeable drop in image qual
 ### Session 2026-05-19
 
 - Q: Should the application preserve the original image file format on export? → A: Preserve the original image file format exactly on export.
+- Q: Should unsupported upload formats like WebP be rejected with a validation error? → A: Reject unsupported upload formats and show a clear validation error.
+- Q: Should SC-002 require exported photos to retain the same resolution as the original? → A: Yes, exported photos must have the same resolution as the original photo.
