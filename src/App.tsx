@@ -7,6 +7,7 @@ import { Inspector } from './components/Inspector';
 import { TimestampSection } from './components/TimestampSection';
 import { LocationSection } from './components/LocationSection';
 import { StyleSection } from './components/StyleSection';
+import { MapPickerModal } from './components/MapPickerModal';
 import { useIsDesktop } from './hooks/useIsDesktop';
 import { usePlaceName } from './hooks/usePlaceName';
 import { OverlayMetadata, Patch, SectionId, UploadedPhoto } from './types';
@@ -29,7 +30,7 @@ function App() {
   const [keepSettings, setKeepSettings] = useState(readKeep);
   const [activeSection, setActiveSection] = useState<SectionId>('location');
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [, setPickerOpen] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const isDesktop = useIsDesktop();
   const placeStatus = usePlaceName(metadata.location, (n) => setMetadata((m) => ({ ...m, placeName: n })));
 
@@ -107,6 +108,16 @@ function App() {
         ]}
       />
       {!isDesktop && <div className="shrink-0 border-t border-line bg-bg p-3">{exportButton}</div>}
+      {pickerOpen && (
+        <MapPickerModal
+          initial={metadata.location}
+          onCancel={() => setPickerOpen(false)}
+          onConfirm={(p) => {
+            patch({ location: p, placeName: null });
+            setPickerOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }

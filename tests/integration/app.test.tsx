@@ -9,6 +9,11 @@ import { reverseGeocode } from '../../src/services/location';
 vi.mock('../../src/utils/imageProcessing', () => ({ processImage: vi.fn() }));
 vi.mock('../../src/services/exif', () => ({ readExif: vi.fn() }));
 vi.mock('../../src/components/LocationMap', () => ({ LocationMap: ({ badge }: { badge: string }) => <div>{badge}</div> }));
+vi.mock('../../src/components/MapPickerModal', () => ({
+  MapPickerModal: ({ onConfirm }: { onConfirm(p: unknown): void }) => (
+    <button onClick={() => onConfirm({ lat: 1.5, lng: 2.5, source: 'map' })}>stub-confirm</button>
+  ),
+}));
 vi.mock('../../src/services/location', async (orig) => ({
   ...(await orig<typeof import('../../src/services/location')>()),
   reverseGeocode: vi.fn(),
@@ -173,6 +178,16 @@ describe('App', () => {
     await ready();
     typeCoords('-8.43221', '115.27904');
     expect(await screen.findByText('Place name unavailable', {}, { timeout: 2000 })).toBeInTheDocument();
+    expect(exportBtn()).toBeEnabled();
+  });
+
+  it('a location picked on the map is applied and the picker closes', async () => {
+    await ready();
+    fireEvent.click(screen.getByRole('button', { name: 'Pick on map' }));
+    fireEvent.click(screen.getByText('stub-confirm'));
+    expect(screen.queryByText('stub-confirm')).not.toBeInTheDocument();
+    expect(screen.getByText('FROM MAP')).toBeInTheDocument();
+    expect(lat().value).toBe('1.5');
     expect(exportBtn()).toBeEnabled();
   });
 
