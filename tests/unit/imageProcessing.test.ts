@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest';
 import { processImage } from '../../src/utils/imageProcessing';
+import { defaultMetadata } from '../../src/utils/metadata';
 
 beforeAll(() => {
   vi.stubGlobal('createImageBitmap', vi.fn().mockResolvedValue({
@@ -37,13 +38,7 @@ describe('processImage', () => {
       srcUrl: 'blob:test',
     };
     
-    const metadata: any = {
-      timestamp: '2026',
-      location: '0,0',
-      fontSize: 48,
-      color: '#fff',
-      position: 'bottom-right',
-    };
+    const metadata = defaultMetadata(undefined, new Date(2026, 10, 5));
     
     const result = await processImage(photo, metadata);
     expect(result.mimeType).toBe('image/jpeg');

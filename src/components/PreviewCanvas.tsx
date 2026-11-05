@@ -1,70 +1,58 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { ShieldCheck } from 'lucide-react';
 import { UploadedPhoto, OverlayMetadata } from '../types';
+import { drawOverlay, loadStampFont } from '../utils/drawOverlay';
 
 interface PreviewCanvasProps {
   photo: UploadedPhoto;
   metadata: OverlayMetadata;
 }
 
-export const PreviewCanvas: React.FC<PreviewCanvasProps> = ({ photo, metadata }) => {
+export const PreviewCanvas = ({ photo, metadata }: PreviewCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [fontReady, setFontReady] = useState(false);
+  const [scale, setScale] = useState<number | null>(null);
+
+  useEffect(() => {
+    let live = true;
+    loadStampFont().then(() => live && setFontReady(true));
+    return () => { live = false; };
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !photo.bitmap) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Use full image dimensions so the preview matches export exactly
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx || !photo.bitmap) return;
+    // Full resolution, so the preview matches the export exactly.
     canvas.width = photo.width;
     canvas.height = photo.height;
-
-    // Draw image
     ctx.drawImage(photo.bitmap, 0, 0, photo.width, photo.height);
-    
-    // Draw overlay
-    ctx.font = `${metadata.fontSize}px Arial, sans-serif`;
-    ctx.fillStyle = metadata.color;
-    
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
-    ctx.shadowBlur = Math.max(2, metadata.fontSize * 0.1);
-    ctx.shadowOffsetX = Math.max(1, metadata.fontSize * 0.05);
-    ctx.shadowOffsetY = Math.max(1, metadata.fontSize * 0.05);
-    
-    const padding = Math.max(photo.width, photo.height) * 0.02;
-    
-    const text1 = metadata.timestamp;
-    const text2 = metadata.location;
-    
-    let x = padding;
-    let y = padding + metadata.fontSize;
-    
-    const lineHeight = metadata.fontSize * 1.2;
-    const totalHeight = lineHeight * 2;
-    
-    if (metadata.position.includes('bottom')) {
-      y = photo.height - padding - totalHeight + metadata.fontSize;
-    }
-    
-    if (metadata.position.includes('right')) {
-      ctx.textAlign = 'right';
-      x = photo.width - padding;
-    } else {
-      ctx.textAlign = 'left';
-    }
-    
-    ctx.fillText(text1, x, y);
-    ctx.fillText(text2, x, y + lineHeight);
-    
-  }, [photo, metadata]);
+    drawOverlay(ctx, photo.width, photo.height, metadata);
+  }, [photo, metadata, fontReady]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const update = () => setScale(Math.round((canvas.clientWidth / photo.width) * 100));
+    update();
+    if (typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(update);
+    ro.observe(canvas);
+    return () => ro.disconnect();
+  }, [photo.width]);
 
   return (
-    <div className="w-full flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
-      <canvas 
-        ref={canvasRef} 
-        className="max-w-full max-h-[70vh] object-contain shadow-sm"
-      />
+    <div className="flex h-full min-h-0 w-full flex-col items-center justify-center gap-3 bg-bg p-4 lg:p-10">
+      <div className="flex min-h-0 w-full flex-1 items-center justify-center">
+        <canvas ref={canvasRef} className="max-h-full max-w-full object-contain" />
+      </div>
+      <div className="flex w-full items-center justify-between gap-3 text-xs text-ink-3">
+        <span className="font-mono">Preview{scale ? ` · ${scale}%` : ''}</span>
+        <span className="flex items-center gap-1.5 text-ink-2">
+          <ShieldCheck className="h-3.5 w-3.5 text-ok" aria-hidden />
+          Exports at full {photo.width} × {photo.height}, original format
+        </span>
+      </div>
     </div>
   );
 };
