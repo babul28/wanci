@@ -1,82 +1,106 @@
-import { useState } from "react";
-import { ImageUploader } from "./components/ImageUploader";
-import { PreviewCanvas } from "./components/PreviewCanvas";
-import { MetadataEditor } from "./components/MetadataEditor";
-import { DownloadControls } from "./components/DownloadControls";
-import { UploadedPhoto, OverlayMetadata } from "./types";
-import { validateLocation, validateTimestamp } from "./utils/validation";
+import { useState } from 'react';
+import { ImageUploader } from './components/ImageUploader';
+import { PreviewCanvas } from './components/PreviewCanvas';
+import { TopBar } from './components/TopBar';
+import { ExportButton } from './components/ExportButton';
+import { Inspector } from './components/Inspector';
+import { TimestampSection } from './components/TimestampSection';
+import { LocationSection } from './components/LocationSection';
+import { StyleSection } from './components/StyleSection';
+import { useIsDesktop } from './hooks/useIsDesktop';
+import { OverlayMetadata, Patch, SectionId, UploadedPhoto } from './types';
+import { carryOver, defaultMetadata } from './utils/metadata';
+import { loadPhoto } from './utils/loadPhoto';
+
+const KEEP_KEY = 'stamp.keepSettings';
+
+const readKeep = () => {
+  try {
+    return localStorage.getItem(KEEP_KEY) !== 'false';
+  } catch {
+    return true;
+  }
+};
 
 function App() {
   const [photo, setPhoto] = useState<UploadedPhoto | null>(null);
+  const [metadata, setMetadata] = useState<OverlayMetadata>(() => defaultMetadata(undefined, new Date()));
+  const [keepSettings, setKeepSettings] = useState(readKeep);
+  const [activeSection, setActiveSection] = useState<SectionId>('location');
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const isDesktop = useIsDesktop();
 
-  // Default metadata
-  const [metadata, setMetadata] = useState<OverlayMetadata>({
-    timestamp: new Date().toISOString().replace("T", " ").substring(0, 19),
-    location: "0.0000° N, 0.0000° E",
-    fontSize: 48,
-    color: "#ffffff",
-    position: "bottom-right",
-  });
+  const patch = (p: Patch) => setMetadata((m) => ({ ...m, ...p }));
 
-  const isMetadataValid =
-    validateTimestamp(metadata.timestamp).isValid &&
-    validateLocation(metadata.location).isValid;
-
-  const resetPhoto = () => {
-    setPhoto(null);
+  const handleFile = async (f: File) => {
+    setUploadError(null);
+    try {
+      const p = await loadPhoto(f);
+      const now = new Date();
+      setMetadata((prev) => (photo && keepSettings ? carryOver(prev, p.exif, now) : defaultMetadata(p.exif, now)));
+      setPhoto(p);
+      if (photo) {
+        URL.revokeObjectURL(photo.srcUrl);
+        photo.bitmap?.close();
+      }
+    } catch (e) {
+      setUploadError(e instanceof Error ? e.message : String(e));
+    }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-            Photo Metadata Editor
-          </h1>
-          <p className="mt-2 text-lg text-gray-600">
-            Add timestamps and location data to your photos without losing
-            quality.
-          </p>
-        </div>
+  const changeKeep = (v: boolean) => {
+    setKeepSettings(v);
+    try {
+      localStorage.setItem(KEEP_KEY, String(v));
+    } catch {
+      // ponytail: storage blocked (private mode); the choice lasts for this session only
+    }
+  };
 
-        {!photo ? (
-          <div className="max-w-2xl mx-auto">
-            <ImageUploader onUpload={setPhoto} />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-4">
-              <PreviewCanvas photo={photo} metadata={metadata} />
-              <div className="flex justify-between items-center">
-                <button
-                  onClick={resetPhoto}
-                  className="text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors"
-                >
-                  Upload a different photo
-                </button>
-                <div className="text-sm text-gray-500">
-                  {photo.name} • {(photo.size / (1024 * 1024)).toFixed(2)} MB
-                </div>
-              </div>
-            </div>
+  const onBlocked = (id: SectionId) => {
+    setActiveSection(id);
+    document.getElementById(`section-${id}`)?.scrollIntoView?.({ block: 'start' });
+  };
 
-            <div className="space-y-6 flex flex-col">
-              <MetadataEditor metadata={metadata} onChange={setMetadata} />
-
-              {isMetadataValid ? (
-                <DownloadControls photo={photo} metadata={metadata} />
-              ) : (
-                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <p className="text-sm text-yellow-700">
-                    Please fix the errors in the overlay settings before
-                    exporting.
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+  if (!photo) {
+    return (
+      <div className="min-h-[100dvh]">
+        <TopBar photo={null} onFile={handleFile} onReset={() => {}} />
+        <ImageUploader onFile={handleFile} error={uploadError} />
       </div>
+    );
+  }
+
+  const exportButton = <ExportButton photo={photo} metadata={metadata} onBlocked={onBlocked} fullWidth={!isDesktop} />;
+
+  return (
+    <div className="flex h-[100dvh] flex-col overflow-hidden lg:grid lg:grid-cols-[1fr_380px] lg:grid-rows-[56px_1fr]">
+      <TopBar
+        photo={photo}
+        onFile={handleFile}
+        onReset={() => setMetadata(defaultMetadata(photo.exif, new Date()))}
+        exportSlot={isDesktop ? exportButton : undefined}
+      />
+      {uploadError && (
+        <p role="alert" className="bg-danger/10 px-4 py-2 text-sm text-danger lg:col-span-2">{uploadError}</p>
+      )}
+      <main className="h-[40vh] shrink-0 lg:h-auto lg:min-h-0">
+        <PreviewCanvas photo={photo} metadata={metadata} />
+      </main>
+      <Inspector
+        active={activeSection}
+        onTab={setActiveSection}
+        sections={[
+          { id: 'time', label: 'Time', node: <TimestampSection metadata={metadata} capturedAt={photo.exif?.capturedAt} onChange={patch} /> },
+          { id: 'location', label: 'Location', node: <LocationSection metadata={metadata} onChange={patch} /> },
+          {
+            id: 'style',
+            label: 'Style',
+            node: <StyleSection metadata={metadata} onChange={patch} keepSettings={keepSettings} onKeepSettings={changeKeep} />,
+          },
+        ]}
+      />
+      {!isDesktop && <div className="shrink-0 border-t border-line bg-bg p-3">{exportButton}</div>}
     </div>
   );
 }
