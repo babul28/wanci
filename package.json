@@ -1,7 +1,7 @@
 {
   "name": "wanci",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Stamp a date, time and location onto a photo, right in the browser.",
   "keywords": [
     "photo",
