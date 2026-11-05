@@ -1,38 +1,40 @@
 import { describe, it, expect } from 'vitest';
-import { validateTimestamp, validateLocation } from '../../src/utils/validation';
+import { validateTimestamp, validateLocation, parseCoordinate } from '../../src/utils/validation';
 
-describe('validation', () => {
-  describe('validateTimestamp', () => {
-    it('should validate a correct timestamp', () => {
-      expect(validateTimestamp('2026-05-19 14:30:00').isValid).toBe(true);
-    });
-    
-    it('should fail on empty timestamp', () => {
-      expect(validateTimestamp('   ').isValid).toBe(false);
-    });
-    
-    it('should fail on invalid date format', () => {
-      expect(validateTimestamp('not-a-date').isValid).toBe(false);
-    });
+describe('validateTimestamp', () => {
+  it('accepts a valid timestamp', () => {
+    expect(validateTimestamp('2026-05-19 14:30:00').isValid).toBe(true);
+    expect(validateTimestamp('2026-11-05T14:32:08').isValid).toBe(true);
   });
+  it('rejects an empty timestamp', () => {
+    expect(validateTimestamp('   ').isValid).toBe(false);
+  });
+  it('rejects an invalid date format', () => {
+    expect(validateTimestamp('not-a-date').isValid).toBe(false);
+  });
+});
 
-  describe('validateLocation', () => {
-    it('should validate correct coordinates', () => {
-      expect(validateLocation('40.7128, -74.0060').isValid).toBe(true);
-      expect(validateLocation('40.7128° N, 74.0060° W').isValid).toBe(true);
-    });
-    
-    it('should fail on empty location', () => {
-      expect(validateLocation('').isValid).toBe(false);
-    });
-    
-    it('should fail if missing numbers', () => {
-      expect(validateLocation('New York').isValid).toBe(false);
-    });
-    
-    it('should fail on out of bounds coordinates', () => {
-      expect(validateLocation('100.0, 0.0').isValid).toBe(false); // Lat > 90
-      expect(validateLocation('0.0, 200.0').isValid).toBe(false); // Lng > 180
-    });
+describe('validateLocation', () => {
+  it('accepts in-range numbers', () => {
+    expect(validateLocation({ lat: 40.7, lng: -74 }).isValid).toBe(true);
+  });
+  it('rejects out-of-range and NaN', () => {
+    expect(validateLocation({ lat: 91, lng: 0 }).isValid).toBe(false);
+    expect(validateLocation({ lat: 0, lng: 181 }).isValid).toBe(false);
+    expect(validateLocation({ lat: NaN, lng: 0 }).isValid).toBe(false);
+  });
+});
+
+describe('parseCoordinate', () => {
+  it('parses dots, commas and whitespace', () => {
+    expect(parseCoordinate('-8.43221', 'lat')).toBe(-8.43221);
+    expect(parseCoordinate('-8,43221', 'lat')).toBe(-8.43221); // Review Focus 1
+    expect(parseCoordinate(' 115.27904 ', 'lng')).toBe(115.27904);
+  });
+  it('rejects empty, garbage and out-of-range input', () => {
+    expect(parseCoordinate('', 'lat')).toBeNull();
+    expect(parseCoordinate('abc', 'lat')).toBeNull();
+    expect(parseCoordinate('95', 'lat')).toBeNull();
+    expect(parseCoordinate('-181', 'lng')).toBeNull();
   });
 });
