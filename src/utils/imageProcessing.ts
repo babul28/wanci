@@ -1,6 +1,7 @@
 import { UploadedPhoto, OverlayMetadata, ExportResult } from '../types';
 import { drawOverlay, loadStampFont } from './drawOverlay';
 import { loadStaticMap } from '../services/staticMap';
+import { writeExif } from '../services/exif';
 
 export const processImage = async (photo: UploadedPhoto, metadata: OverlayMetadata): Promise<ExportResult> => {
   const { location, showMap } = metadata;
@@ -21,10 +22,11 @@ export const processImage = async (photo: UploadedPhoto, metadata: OverlayMetada
   drawOverlay(ctx, photo.width, photo.height, metadata, map);
 
   const mimeType = photo.type;
-  const blob = await new Promise<Blob | null>((resolve) =>
+  const raw = await new Promise<Blob | null>((resolve) =>
     canvas.toBlob(resolve, mimeType, mimeType === 'image/jpeg' ? 1.0 : undefined),
   );
-  if (!blob) throw new Error('Canvas toBlob failed');
+  if (!raw) throw new Error('Canvas toBlob failed');
+  const blob = await writeExif(raw, photo.file, metadata, photo.width, photo.height);
 
   const fileExt = mimeType === 'image/jpeg' ? 'jpg' : 'png';
   return {

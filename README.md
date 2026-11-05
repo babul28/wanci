@@ -12,7 +12,7 @@ Stamp a date, time and location onto a photo, right in the browser. Upload a JPE
   - **Manual:** type latitude and longitude. A comma decimal (`-8,43221`) works too.
 - **Place name.** Coordinates are reverse-geocoded to a readable name (village, city, province) that can be printed under the coordinates.
 - **Style.** Font size, color, and corner position. The "keep settings" option carries the settings over to the next photo.
-- **Export.** Original resolution, same format (JPEG at quality 1.0, or PNG), saved as `<name>_edited.<ext>`. Export stays blocked until the stamp has a valid time and at least one location line.
+- **Export.** Original resolution, same format (JPEG at quality 1.0, or PNG), saved as `<name>_edited.<ext>`. JPEG exports keep the original photo's EXIF, with capture time and GPS set to the stamped time and location (thumbnail dropped, orientation reset). The time zone is the photo's own for the capture time, the browser's for "now", and left out for a custom time; PNG exports carry no EXIF. Export stays blocked until the stamp has a valid time and at least one location line.
 
 ## Getting started
 
@@ -38,7 +38,7 @@ npm run dev       # dev server at http://localhost:5173
 2. `defaultMetadata` (first photo) or `carryOver` (next photo, keep settings on) builds the stamp state.
 3. `usePlaceName` waits 800 ms after the location changes, then reverse-geocodes through Nominatim.
 4. The preview and the export both draw the text with `drawOverlay`, so what you see is what you get.
-5. `processImage` draws the photo and stamp on a full-size canvas, and `ExportButton` downloads the blob.
+5. `processImage` draws the photo and stamp on a full-size canvas, `writeExif` (`piexifjs`) copies the EXIF across with the stamped time and GPS, and `ExportButton` downloads the blob.
 
 ## Project structure
 
@@ -47,7 +47,7 @@ src/
   App.tsx          state, upload flow, layout (mobile stack / desktop grid)
   components/      UI: uploader, preview, inspector sections, map picker, export
   hooks/           useDeviceLocation, usePlaceName, useIsDesktop
-  services/        exif.ts (exifr), location.ts (Geolocation + Nominatim)
+  services/        exif.ts (exifr read, piexifjs write), location.ts (Geolocation + Nominatim)
   utils/           metadata, drawOverlay, imageProcessing, exportGate, validation
   types/           shared types
 tests/
@@ -58,7 +58,7 @@ docs/superpowers/  design spec and implementation plan for the stamp redesign
 
 ## Tech stack
 
-React 18, TypeScript, Vite 5, Tailwind CSS 3, Leaflet / react-leaflet (OpenStreetMap tiles), exifr, lucide-react, Vitest + Testing Library.
+React 18, TypeScript, Vite 5, Tailwind CSS 3, Leaflet / react-leaflet (OpenStreetMap tiles), exifr, piexifjs, lucide-react, Vitest + Testing Library.
 
 ## Third-party services
 
