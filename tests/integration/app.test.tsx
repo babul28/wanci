@@ -4,9 +4,18 @@ import App from '../../src/App';
 import { processImage } from '../../src/utils/imageProcessing';
 
 import { readExif } from '../../src/services/exif';
+import { reverseGeocode } from '../../src/services/location';
 
 vi.mock('../../src/utils/imageProcessing', () => ({ processImage: vi.fn() }));
 vi.mock('../../src/services/exif', () => ({ readExif: vi.fn() }));
+vi.mock('../../src/components/LocationMap', () => ({ LocationMap: ({ badge }: { badge: string }) => <div>{badge}</div> }));
+vi.mock('../../src/services/location', async (orig) => ({
+  ...(await orig<typeof import('../../src/services/location')>()),
+  reverseGeocode: vi.fn(),
+  cachedPlaceName: vi.fn(),
+}));
+
+const setGeolocation = (value: unknown) => Object.defineProperty(navigator, 'geolocation', { value, configurable: true });
 
 const FULL_EXIF = { capturedAt: '2026-11-04T14:32:08', gps: { lat: -8.43221, lng: 115.27904 } };
 
@@ -19,6 +28,8 @@ beforeEach(() => {
   HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({ drawImage: vi.fn(), fillText: vi.fn() }) as any;
   vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {}); // jsdom can't navigate to blob: URLs
   vi.mocked(readExif).mockResolvedValue({});
+  vi.mocked(reverseGeocode).mockResolvedValue(null);
+  setGeolocation(undefined);
   vi.mocked(processImage).mockImplementation(async () => ({ blob: new Blob(), downloadUrl: 'blob:out', fileName: 'a_edited.jpg', mimeType: 'image/jpeg' }));
 });
 afterEach(() => vi.restoreAllMocks());
@@ -117,6 +128,52 @@ describe('App', () => {
     expect((screen.getByLabelText('Timestamp') as HTMLInputElement).value).toMatch(/^2026-11-04T14:32:08(\.000)?$/); // jsdom appends .000
     expect(screen.getByText('Read from EXIF')).toBeInTheDocument();
     expect(lat().value).toBe('-8.43221');
+  });
+
+  it('EXIF GPS shows the FROM PHOTO map', async () => {
+    vi.mocked(readExif).mockResolvedValue(FULL_EXIF);
+    render(<App />);
+    upload('a.jpg');
+    expect(await screen.findByText('FROM PHOTO')).toBeInTheDocument();
+    expect(screen.getByText('Location read from the photo.')).toBeInTheDocument();
+  });
+
+  it('a photo without GPS shows the empty state', async () => {
+    await ready();
+    expect(screen.getByText('This photo has no GPS data.')).toBeInTheDocument();
+  });
+
+  it('denied geolocation shows how to unblock it', async () => {
+    setGeolocation({ getCurrentPosition: (_ok: unknown, err: (e: { code: number }) => void) => err({ code: 1 }) });
+    await ready();
+    fireEvent.click(screen.getByRole('button', { name: 'Use my location' }));
+    expect(await screen.findByText(/Location access is blocked\. Click the lock icon in the address bar/)).toBeInTheDocument();
+  });
+
+  it('a device fix shows the GPS badge', async () => {
+    setGeolocation({
+      getCurrentPosition: (ok: (p: unknown) => void) => ok({ coords: { latitude: -8.4, longitude: 115.2, accuracy: 12.4 } }),
+    });
+    await ready();
+    fireEvent.click(screen.getByRole('button', { name: 'Use my location' }));
+    expect(await screen.findByText('GPS ±12 m')).toBeInTheDocument();
+  });
+
+  it('the place name appears 800 ms after a location is set', async () => {
+    vi.mocked(reverseGeocode).mockResolvedValue('Tegallalang, Gianyar, Bali');
+    await ready();
+    typeCoords('-8.43221', '115.27904');
+    expect(screen.getByText('Looking up place name…')).toBeInTheDocument();
+    expect(reverseGeocode).not.toHaveBeenCalled();
+    expect(await screen.findByText('Tegallalang, Gianyar, Bali', {}, { timeout: 2000 })).toBeInTheDocument();
+    expect(reverseGeocode).toHaveBeenCalledWith(-8.43221, 115.27904);
+  });
+
+  it('a failed lookup says so and does not block export', async () => {
+    await ready();
+    typeCoords('-8.43221', '115.27904');
+    expect(await screen.findByText('Place name unavailable', {}, { timeout: 2000 })).toBeInTheDocument();
+    expect(exportBtn()).toBeEnabled();
   });
 
   it('rejects a non-image upload inline', async () => {

@@ -8,6 +8,7 @@ import { TimestampSection } from './components/TimestampSection';
 import { LocationSection } from './components/LocationSection';
 import { StyleSection } from './components/StyleSection';
 import { useIsDesktop } from './hooks/useIsDesktop';
+import { usePlaceName } from './hooks/usePlaceName';
 import { OverlayMetadata, Patch, SectionId, UploadedPhoto } from './types';
 import { carryOver, defaultMetadata } from './utils/metadata';
 import { loadPhoto } from './utils/loadPhoto';
@@ -28,7 +29,9 @@ function App() {
   const [keepSettings, setKeepSettings] = useState(readKeep);
   const [activeSection, setActiveSection] = useState<SectionId>('location');
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [, setPickerOpen] = useState(false);
   const isDesktop = useIsDesktop();
+  const placeStatus = usePlaceName(metadata.location, (n) => setMetadata((m) => ({ ...m, placeName: n })));
 
   const patch = (p: Patch) => setMetadata((m) => ({ ...m, ...p }));
 
@@ -92,7 +95,10 @@ function App() {
         onTab={setActiveSection}
         sections={[
           { id: 'time', label: 'Time', node: <TimestampSection metadata={metadata} capturedAt={photo.exif?.capturedAt} onChange={patch} /> },
-          { id: 'location', label: 'Location', node: <LocationSection metadata={metadata} onChange={patch} /> },
+          { id: 'location', label: 'Location', node: (
+              <LocationSection metadata={metadata} onChange={patch} placeStatus={placeStatus} onOpenPicker={() => setPickerOpen(true)} />
+            ),
+          },
           {
             id: 'style',
             label: 'Style',
