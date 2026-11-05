@@ -3,7 +3,28 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    color-scheme: dark;
+  }
   body {
     @apply antialiased;
+  }
+}
+
+@layer components {
+  .section-title {
+    @apply text-xs font-semibold uppercase tracking-[0.6px] text-ink-2;
+  }
+  .field {
+    @apply h-10 w-full rounded-lg border border-line bg-bg px-3 font-mono text-sm text-ink outline-none focus:border-accent;
+  }
+  .btn {
+    @apply inline-flex h-9 items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-accent font-semibold text-accent-ink hover:bg-[#ff8a33];
+  }
+  .btn-ghost {
+    @apply btn border border-line text-ink-2 hover:bg-surface-2 hover:text-ink;
   }
 }

@@ -6,6 +6,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
 export const toLocalInput = (d: Date): string =>
   `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 
+/** datetime-local inputs drop `:ss` when it is zero and may add `.mmm`; keep exactly `YYYY-MM-DDTHH:mm:ss`. */
+export const normalizeLocalInput = (v: string): string => (v.length === 16 ? `${v}:00` : v.slice(0, 19));
+
 export const formatStampTime = (ts: string): string => ts.replace('T', ' ');
 
 export const DEFAULT_STYLE = { fontSize: 48, color: '#FF7A1A', position: 'bottom-right' } as const;
