@@ -114,7 +114,7 @@ describe('App', () => {
     render(<App />);
     upload('a.jpg');
     await waitFor(() => expect(exportBtn()).toBeEnabled());
-    expect(screen.getByLabelText('Timestamp')).toHaveValue(expect.stringMatching(/^2026-11-04T14:32:08(\.000)?$/)); // jsdom appends .000
+    expect((screen.getByLabelText('Timestamp') as HTMLInputElement).value).toMatch(/^2026-11-04T14:32:08(\.000)?$/); // jsdom appends .000
     expect(screen.getByText('Read from EXIF')).toBeInTheDocument();
     expect(lat().value).toBe('-8.43221');
   });
