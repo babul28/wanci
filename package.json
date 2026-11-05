@@ -1,7 +1,30 @@
 {
   "name": "wanci",
-  "private": true,
-  "version": "0.0.0",
+  "private": false,
+  "version": "0.1.0",
+  "description": "Stamp a date, time and location onto a photo, right in the browser.",
+  "keywords": [
+    "photo",
+    "timestamp",
+    "geotag",
+    "exif",
+    "stamp",
+    "location",
+    "react",
+    "vite"
+  ],
+  "author": "Miftahul Lubab <miftahul.lubab20@gmail.com>",
+  "homepage": "https://github.com/babul28/wanci#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/babul28/wanci.git"
+  },
+  "bugs": {
+    "url": "https://github.com/babul28/wanci/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
