@@ -151,7 +151,10 @@ export const LocationSection = ({ metadata, onChange, placeStatus, onOpenPicker 
         {loc.source === 'exif' && (
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-xs text-ink-2">Location read from the photo.</p>
-            {locateBtn(false, 'Use my location instead')}
+            <button type="button" className="btn-ghost lg:w-full" onClick={device.locate}>
+              <Crosshair className="h-4 w-4" aria-hidden />
+              Use my location instead
+            </button>
           </div>
         )}
         {loc.source === 'device' && isDesktop && (
