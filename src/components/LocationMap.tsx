@@ -2,11 +2,9 @@ import { useEffect } from 'react';
 import { AttributionControl, Circle, CircleMarker, MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { Maximize2 } from 'lucide-react';
 import { GeoPoint } from '../types';
+import { OSM_TILE_URL, PIN_STYLE, ZOOM } from '../services/staticMap';
 
-export const OSM_TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 export const OSM_ATTRIBUTION = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-
-export const PIN_STYLE = { color: '#FFFFFF', weight: 2, fillColor: '#FF7A1A', fillOpacity: 1 };
 
 const Recenter = ({ lat, lng }: { lat: number; lng: number }) => {
   const map = useMap();
@@ -28,7 +26,7 @@ export const LocationMap = ({ point, badge, dimmed, onPick }: LocationMapProps) 
   <div className={`relative h-[180px] overflow-hidden rounded-[10px] border border-line ${dimmed ? 'opacity-40' : ''}`}>
     <MapContainer
       center={[point.lat, point.lng]}
-      zoom={16}
+      zoom={ZOOM} // same view as the stamped map
       dragging={false}
       zoomControl={false}
       scrollWheelZoom={false}

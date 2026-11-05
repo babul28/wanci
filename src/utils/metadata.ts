@@ -20,6 +20,7 @@ export const defaultMetadata = (exif: PhotoExif | undefined, now: Date): Overlay
   placeName: null,
   showCoords: true,
   showPlace: true,
+  showMap: true,
   ...DEFAULT_STYLE,
 });
 

@@ -33,6 +33,7 @@ export interface OverlayMetadata {
   placeName: string | null;
   showCoords: boolean;
   showPlace: boolean;
+  showMap: boolean;
   fontSize: number;
   color: string;
   position: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right';

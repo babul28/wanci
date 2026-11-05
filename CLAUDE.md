@@ -24,7 +24,7 @@ Commit messages and PR descriptions contain only the change itself: no AI attrib
 
 - New behaviour or bug fix: write the failing test first.
 - `tests/unit/` for pure functions, `tests/integration/` for components and hooks.
-- jsdom has no canvas or Leaflet: integration tests mock `LocationMap`, `MapPickerModal`, `processImage`, `readExif` and `reverseGeocode` (see the top of `tests/integration/app.test.tsx`). Reuse those mocks.
+- jsdom has no canvas or Leaflet: integration tests mock `LocationMap`, `MapPickerModal`, `processImage`, `readExif`, `reverseGeocode` and `loadStaticMap` (see the top of `tests/integration/app.test.tsx`). Reuse those mocks.
 - Reset the location service cache/queue between tests with `_resetLocationServiceForTests()`.
 - UI layout must hold at phone width (≈375 px) without horizontal scroll; desktop layout starts at Tailwind `lg`.
 

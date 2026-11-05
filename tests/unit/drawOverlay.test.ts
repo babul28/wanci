@@ -24,4 +24,35 @@ describe('drawOverlay', () => {
     const lastY = ctx.fillText.mock.calls[2][2];
     expect(lastY).toBeCloseTo(800 - 1000 * 0.02); // last baseline sits on the bottom padding
   });
+
+  const mapCtx = () => ({ fillText: vi.fn(), drawImage: vi.fn() }) as any;
+  const map = {} as CanvasImageSource;
+
+  it('draws the map above the text for bottom positions, with OSM credit', () => {
+    const ctx = mapCtx();
+    drawOverlay(ctx, 1000, 800, { ...base, fontSize: 40, position: 'bottom-right' }, map);
+    const [img, x, y, w, h] = ctx.drawImage.mock.calls[0];
+    expect(img).toBe(map);
+    expect(w).toBe(320); // 8 × font size, landscape 8:5
+    expect(h).toBe(200); // 5 × font size
+    expect(x).toBeCloseTo(1000 - 20 - 320); // right-aligned on the padding
+    const firstTextTop = ctx.fillText.mock.calls[0][2] - 40;
+    expect(y + h).toBeLessThan(firstTextTop);
+    expect(ctx.fillText.mock.calls.some((c: any[]) => c[0] === '© OpenStreetMap')).toBe(true);
+  });
+
+  it('pushes the text below the map for top positions', () => {
+    const ctx = mapCtx();
+    drawOverlay(ctx, 1000, 800, { ...base, fontSize: 40, position: 'top-left' }, map);
+    const [, x, y, , h] = ctx.drawImage.mock.calls[0];
+    expect([x, y]).toEqual([20, 20]);
+    expect(ctx.fillText.mock.calls[0][2] - 40).toBeGreaterThan(y + h);
+  });
+
+  it('skips the map when it is switched off or not loaded', () => {
+    const ctx = mapCtx();
+    drawOverlay(ctx, 1000, 800, { ...base, showMap: false }, map);
+    drawOverlay(ctx, 1000, 800, base, null);
+    expect(ctx.drawImage).not.toHaveBeenCalled();
+  });
 });

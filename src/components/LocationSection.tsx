@@ -196,6 +196,7 @@ export const LocationSection = ({ metadata, onChange, placeStatus, onOpenPicker 
       <div className="flex flex-col gap-1">
         <Switch label="Show coordinates on photo" checked={metadata.showCoords} onChange={(v) => onChange({ showCoords: v })} />
         <Switch label="Show place name on photo" checked={metadata.showPlace} onChange={(v) => onChange({ showPlace: v })} />
+        <Switch label="Show map on photo" checked={metadata.showMap} onChange={(v) => onChange({ showMap: v })} />
       </div>
     </div>
   );
