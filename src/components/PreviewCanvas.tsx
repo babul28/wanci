@@ -47,7 +47,7 @@ export const PreviewCanvas = ({ photo, metadata }: PreviewCanvasProps) => {
         <canvas ref={canvasRef} className="max-h-full max-w-full object-contain" />
       </div>
       <div className="flex w-full items-center justify-between gap-3 text-xs text-ink-3">
-        <span className="font-mono">Preview{scale ? ` · ${scale}%` : ''}</span>
+        <span className="whitespace-nowrap font-mono">Preview{scale ? ` · ${scale}%` : ''}</span>
         <span className="flex items-center gap-1.5 text-ink-2">
           <ShieldCheck className="h-3.5 w-3.5 text-ok" aria-hidden />
           Exports at full {photo.width} × {photo.height}, original format

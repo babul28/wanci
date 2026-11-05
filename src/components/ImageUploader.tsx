@@ -62,7 +62,7 @@ export const ImageUploader = ({ onFile, error }: ImageUploaderProps) => {
 
       <ul className="flex flex-col gap-3 text-[13px] text-ink-2 sm:flex-row sm:gap-8">
         {FACTS.map(({ icon: Icon, text }) => (
-          <li key={text} className="flex items-center gap-2">
+          <li key={text} className="flex items-center gap-2 text-left">
             <Icon className="h-4 w-4 shrink-0 text-accent" aria-hidden />
             {text}
           </li>
