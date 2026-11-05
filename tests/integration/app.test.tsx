@@ -59,6 +59,13 @@ const ready = async () => {
 };
 
 describe('App', () => {
+  it('links to the GitHub repository from the header', () => {
+    render(<App />);
+    const link = screen.getByRole('link', { name: 'View source on GitHub' });
+    expect(link).toHaveAttribute('href', 'https://github.com/babul28/wanci');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
   it('blocks export until a location is typed', async () => {
     await ready();
     expect(screen.getByText('Add a location to export')).toBeInTheDocument();
