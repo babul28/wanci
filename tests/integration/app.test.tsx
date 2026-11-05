@@ -3,7 +3,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import App from '../../src/App';
 import { processImage } from '../../src/utils/imageProcessing';
 
+import { readExif } from '../../src/services/exif';
+
 vi.mock('../../src/utils/imageProcessing', () => ({ processImage: vi.fn() }));
+vi.mock('../../src/services/exif', () => ({ readExif: vi.fn() }));
+
+const FULL_EXIF = { capturedAt: '2026-11-04T14:32:08', gps: { lat: -8.43221, lng: 115.27904 } };
 
 // restoreAllMocks resets vi.fn() implementations, so every stub is (re)installed per test.
 beforeEach(() => {
@@ -13,6 +18,7 @@ beforeEach(() => {
   vi.stubGlobal('matchMedia', undefined); // phone layout
   HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({ drawImage: vi.fn(), fillText: vi.fn() }) as any;
   vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {}); // jsdom can't navigate to blob: URLs
+  vi.mocked(readExif).mockResolvedValue({});
   vi.mocked(processImage).mockImplementation(async () => ({ blob: new Blob(), downloadUrl: 'blob:out', fileName: 'a_edited.jpg', mimeType: 'image/jpeg' }));
 });
 afterEach(() => vi.restoreAllMocks());
@@ -101,6 +107,16 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: /Export JPG|Exporting/ }));
     await waitFor(() => expect(exportBtn()).toBeEnabled());
     expect(processImage).toHaveBeenCalledTimes(1);
+  });
+
+  it('fills time and location from EXIF', async () => {
+    vi.mocked(readExif).mockResolvedValue(FULL_EXIF);
+    render(<App />);
+    upload('a.jpg');
+    await waitFor(() => expect(exportBtn()).toBeEnabled());
+    expect(screen.getByLabelText('Timestamp')).toHaveValue(expect.stringMatching(/^2026-11-04T14:32:08(\.000)?$/)); // jsdom appends .000
+    expect(screen.getByText('Read from EXIF')).toBeInTheDocument();
+    expect(lat().value).toBe('-8.43221');
   });
 
   it('rejects a non-image upload inline', async () => {

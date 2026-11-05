@@ -1,12 +1,16 @@
 import { UploadedPhoto } from '../types';
+import { readExif } from '../services/exif';
 
 export const loadPhoto = async (file: File): Promise<UploadedPhoto> => {
   if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
     throw new Error('Please upload a valid JPEG or PNG image.');
   }
-  const bitmap = await createImageBitmap(file).catch(() => {
-    throw new Error('Failed to process image. Please try another file.');
-  });
+  const [bitmap, exif] = await Promise.all([
+    createImageBitmap(file).catch(() => {
+      throw new Error('Failed to process image. Please try another file.');
+    }),
+    readExif(file),
+  ]);
   return {
     file,
     name: file.name,
@@ -16,5 +20,6 @@ export const loadPhoto = async (file: File): Promise<UploadedPhoto> => {
     size: file.size,
     srcUrl: URL.createObjectURL(file),
     bitmap,
+    exif,
   };
 };
