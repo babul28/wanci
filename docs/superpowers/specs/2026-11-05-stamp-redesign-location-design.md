@@ -92,9 +92,13 @@ When the gate is closed:
 
 ### 4.5 Replacing the photo, and Reset
 
-The owner chose this: **settings carry over to the next photo.** Several photos from one visit are usually uploaded one after another.
+The owner chose this: **settings carry over to the next photo by default.** Several photos from one visit are usually uploaded one after another. A switch controls it, and a Reset button sits alongside it. The owner asked for both.
 
-- **Replace photo** keeps the location, place name, toggles, timestamp source and value, and style.
+- **"Keep settings for next photo" switch**, on by default.
+  - Off: Replace photo behaves as if Reset ran right after the new photo loaded.
+  - The choice is remembered in `localStorage` per browser. Wrap access in try/catch and fall back to on.
+  - Placement (my call): a row at the bottom of the inspector on desktop, and at the bottom of the Style tab on phone.
+- **Replace photo** with the switch on keeps the location, place name, toggles, timestamp source and value, and style.
 - **Exception, the new photo's own EXIF wins:**
   - GPS in the new photo replaces the carried location.
   - `DateTimeOriginal` in the new photo switches the timestamp to Capture time with that value.
@@ -170,6 +174,7 @@ The user chose this layout from mockups in the brainstorm. It replaces IMPL's "b
   - The export gate covers each closed case from §4.4 (no location, no time, no location line will print) and the open case.
   - The "No capture time" note shows only when EXIF has no time and the source is Now.
   - Replace photo carries settings over, the new photo's EXIF overrides them, and Reset restores defaults.
+  - With the "Keep settings" switch off, Replace starts fresh, and the switch value persists across reloads.
 - Integration test updates as IMPL §9, plus the export gate.
 - Manual checks:
   - A phone, 360–430 px wide: all three tabs usable, Export reachable, picker full-screen.
@@ -193,6 +198,7 @@ The user chose this layout from mockups in the brainstorm. It replaces IMPL's "b
 - **The export gate checks what will actually print**, not just whether a location is set. A photo with both location lines toggled off would also be rejected.
 - **The timestamp is a native date-time input**, so it can't hold a garbled value. Clearing it blocks export.
 - **On Replace, the new photo's EXIF overrides carried values.** Otherwise a carried location could silently stamp the wrong site onto a geotagged photo.
+- **"Keep settings" switch:** on by default, remembered per browser, at the bottom of the inspector (desktop) or the Style tab (phone).
 - **Reset sits in the top bar with no confirmation.** It's cheap to redo, and a confirmation dialog would be friction on every visit.
 - **The empty-state primary action differs by layout:** Pick on map on desktop, Use my location on phone. A desktop device fix gets a "where you are now" note.
 
