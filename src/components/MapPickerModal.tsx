@@ -56,6 +56,7 @@ export const MapPickerModal = ({ initial, onCancel, onConfirm }: MapPickerModalP
     setFlyTarget(p);
   });
 
+  const downOnBackdrop = useRef(false);
   const cancel = useRef(onCancel);
   cancel.current = onCancel;
   useEffect(() => {
@@ -88,7 +89,12 @@ export const MapPickerModal = ({ initial, onCancel, onConfirm }: MapPickerModalP
   const placeLine = place ?? (placeStatus === 'pending' ? 'Looking up place name…' : placeStatus === 'failed' ? 'Place name unavailable' : '');
 
   return (
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/60 lg:p-6" onClick={(e) => e.target === e.currentTarget && onCancel()}>
+    <div
+      className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/60 lg:p-6"
+      // A drag that starts on the map and ends here still fires a click on the backdrop; only close when it started here.
+      onMouseDown={(e) => (downOnBackdrop.current = e.target === e.currentTarget)}
+      onClick={(e) => downOnBackdrop.current && e.target === e.currentTarget && onCancel()}
+    >
       <div role="dialog" aria-modal="true" aria-label="Choose location" className="flex h-full w-full flex-col overflow-hidden bg-surface lg:h-[640px] lg:max-h-full lg:w-[880px] lg:rounded-[14px] lg:border lg:border-line">
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-line px-4">
           <h2 className="text-[15px] font-semibold">Choose location</h2>

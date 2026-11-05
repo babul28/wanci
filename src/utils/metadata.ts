@@ -29,12 +29,17 @@ export const carryOver = (prev: OverlayMetadata, exif: PhotoExif | undefined, no
   if (exif?.gps) {
     m.location = { ...exif.gps, source: 'exif' };
     m.placeName = null;
+  } else if (prev.location?.source === 'exif') {
+    // Carried from the previous photo, so it is no longer "FROM PHOTO" for this one.
+    m.location = { lat: prev.location.lat, lng: prev.location.lng, source: 'manual' };
   }
   if (exif?.capturedAt) {
     m.timestamp = exif.capturedAt;
     m.timestampSource = 'capture';
   } else if (prev.timestampSource === 'now') {
     m.timestamp = toLocalInput(now);
+  } else if (prev.timestampSource === 'capture') {
+    m.timestampSource = 'custom'; // the previous photo's capture time, not this one's
   }
   return m;
 };

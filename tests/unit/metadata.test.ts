@@ -33,6 +33,13 @@ describe('metadata', () => {
     };
     expect(carryOver(prev, undefined, now)).toEqual(prev);
   });
+  it("carryOver keeps the previous photo's EXIF values but stops calling them this photo's EXIF", () => {
+    const m = carryOver(defaultMetadata(exifFull, now), undefined, now);
+    expect(m).toMatchObject({
+      timestamp: '2026-11-04T14:32:08', timestampSource: 'custom',
+      location: { lat: -8.43221, lng: 115.27904, source: 'manual' },
+    });
+  });
   it('carryOver refreshes a carried Now', () => {
     const prev = defaultMetadata(undefined, new Date(2026, 0, 1));
     expect(carryOver(prev, undefined, now).timestamp).toBe('2026-11-05T09:00:00');

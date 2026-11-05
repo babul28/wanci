@@ -71,6 +71,19 @@ describe('MapPickerModal', () => {
     expect(await screen.findByText('No places found.')).toBeInTheDocument();
   });
 
+  it('a drag that ends over the backdrop does not close the picker; a real backdrop click does', () => {
+    const onCancel = vi.fn();
+    render(<MapPickerModal initial={null} onCancel={onCancel} onConfirm={vi.fn()} />);
+    const dialog = screen.getByRole('dialog');
+    const backdrop = dialog.parentElement!;
+    fireEvent.mouseDown(dialog);
+    fireEvent.click(backdrop); // Chrome targets the common ancestor when down/up land on different elements
+    expect(onCancel).not.toHaveBeenCalled();
+    fireEvent.mouseDown(backdrop);
+    fireEvent.click(backdrop);
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
   it('Cancel and Escape both cancel', () => {
     const onCancel = vi.fn();
     render(<MapPickerModal initial={null} onCancel={onCancel} onConfirm={vi.fn()} />);

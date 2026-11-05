@@ -135,6 +135,17 @@ describe('App', () => {
     expect(lat().value).toBe('-8.43221');
   });
 
+  it('tabbing through the coordinate fields keeps a precise EXIF location labelled FROM PHOTO', async () => {
+    vi.mocked(readExif).mockResolvedValue({ gps: { lat: -8.4322145, lng: 115.2790412 } });
+    render(<App />);
+    upload('a.jpg');
+    await screen.findByText('FROM PHOTO');
+    fireEvent.blur(lat());
+    fireEvent.blur(lng());
+    expect(screen.getByText('FROM PHOTO')).toBeInTheDocument();
+    expect(screen.queryByText('MANUAL')).not.toBeInTheDocument();
+  });
+
   it('EXIF GPS shows the FROM PHOTO map', async () => {
     vi.mocked(readExif).mockResolvedValue(FULL_EXIF);
     render(<App />);

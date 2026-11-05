@@ -50,7 +50,8 @@ export const LocationSection = ({ metadata, onChange, placeStatus, onOpenPicker 
       if (loc) onChange({ location: null, placeName: null });
     } else if (a !== null && b !== null) {
       setError(null);
-      if (a !== loc?.lat || b !== loc?.lng) onChange({ location: { lat: a, lng: b, source: 'manual' }, placeName: null });
+      // Compare with what is shown (5 dp): a bare blur must not relabel a precise EXIF/device point as manual.
+      if (lat.trim() !== show(loc?.lat) || lng.trim() !== show(loc?.lng)) onChange({ location: { lat: a, lng: b, source: 'manual' }, placeName: null });
     } else if ((lat.trim() && a === null) || (lng.trim() && b === null)) {
       setError('Latitude must be between -90 and 90, longitude between -180 and 180.');
     }
