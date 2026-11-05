@@ -7,7 +7,8 @@ import { PlaceResult, hasGeolocation, searchPlaces } from '../services/location'
 import { useDeviceLocation } from '../hooks/useDeviceLocation';
 import { usePlaceName } from '../hooks/usePlaceName';
 import { useIsDesktop } from '../hooks/useIsDesktop';
-import { OSM_ATTRIBUTION, OSM_TILE_URL } from './LocationMap';
+import { OSM_ATTRIBUTION } from './LocationMap';
+import { OSM_TILE_URL } from '../services/staticMap';
 
 interface MapPickerModalProps {
   initial: GeoPoint | null;

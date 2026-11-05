@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ShieldCheck } from 'lucide-react';
 import { UploadedPhoto, OverlayMetadata } from '../types';
 import { drawOverlay, loadStampFont } from '../utils/drawOverlay';
+import { loadStaticMap } from '../services/staticMap';
 
 interface PreviewCanvasProps {
   photo: UploadedPhoto;
@@ -12,12 +13,24 @@ export const PreviewCanvas = ({ photo, metadata }: PreviewCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fontReady, setFontReady] = useState(false);
   const [scale, setScale] = useState<number | null>(null);
+  const [map, setMap] = useState<HTMLCanvasElement | null>(null);
+  const { location, showMap } = metadata;
+  const lat = location?.lat;
+  const lng = location?.lng;
 
   useEffect(() => {
     let live = true;
     loadStampFont().then(() => live && setFontReady(true));
     return () => { live = false; };
   }, []);
+
+  useEffect(() => {
+    setMap(null);
+    if (!showMap || lat === undefined || lng === undefined) return;
+    let live = true;
+    loadStaticMap(lat, lng).then((c) => live && setMap(c));
+    return () => { live = false; };
+  }, [showMap, lat, lng]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -27,8 +40,8 @@ export const PreviewCanvas = ({ photo, metadata }: PreviewCanvasProps) => {
     canvas.width = photo.width;
     canvas.height = photo.height;
     ctx.drawImage(photo.bitmap, 0, 0, photo.width, photo.height);
-    drawOverlay(ctx, photo.width, photo.height, metadata);
-  }, [photo, metadata, fontReady]);
+    drawOverlay(ctx, photo.width, photo.height, metadata, map);
+  }, [photo, metadata, fontReady, map]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

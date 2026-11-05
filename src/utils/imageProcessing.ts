@@ -1,8 +1,15 @@
 import { UploadedPhoto, OverlayMetadata, ExportResult } from '../types';
 import { drawOverlay, loadStampFont } from './drawOverlay';
+import { loadStaticMap } from '../services/staticMap';
 
 export const processImage = async (photo: UploadedPhoto, metadata: OverlayMetadata): Promise<ExportResult> => {
-  const [bitmap] = await Promise.all([photo.bitmap ?? createImageBitmap(photo.file), loadStampFont()]);
+  const { location, showMap } = metadata;
+  const [bitmap, , map] = await Promise.all([
+    photo.bitmap ?? createImageBitmap(photo.file),
+    loadStampFont(),
+    // ponytail: offline export goes out without the map (the preview shows the same); block export if proof needs it
+    showMap && location ? loadStaticMap(location.lat, location.lng) : null,
+  ]);
 
   const canvas = document.createElement('canvas');
   canvas.width = photo.width;
@@ -11,7 +18,7 @@ export const processImage = async (photo: UploadedPhoto, metadata: OverlayMetada
   if (!ctx) throw new Error('Could not get canvas context');
 
   ctx.drawImage(bitmap, 0, 0, photo.width, photo.height);
-  drawOverlay(ctx, photo.width, photo.height, metadata);
+  drawOverlay(ctx, photo.width, photo.height, metadata, map);
 
   const mimeType = photo.type;
   const blob = await new Promise<Blob | null>((resolve) =>

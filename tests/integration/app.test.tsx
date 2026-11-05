@@ -5,6 +5,7 @@ import { processImage } from '../../src/utils/imageProcessing';
 
 import { readExif } from '../../src/services/exif';
 import { reverseGeocode } from '../../src/services/location';
+import { loadStaticMap } from '../../src/services/staticMap';
 
 vi.mock('../../src/utils/imageProcessing', () => ({ processImage: vi.fn() }));
 vi.mock('../../src/services/exif', () => ({ readExif: vi.fn() }));
@@ -13,6 +14,10 @@ vi.mock('../../src/components/MapPickerModal', () => ({
   MapPickerModal: ({ onConfirm }: { onConfirm(p: unknown): void }) => (
     <button onClick={() => onConfirm({ lat: 1.5, lng: 2.5, source: 'map' })}>stub-confirm</button>
   ),
+}));
+vi.mock('../../src/services/staticMap', async (orig) => ({
+  ...(await orig<typeof import('../../src/services/staticMap')>()),
+  loadStaticMap: vi.fn(),
 }));
 vi.mock('../../src/services/location', async (orig) => ({
   ...(await orig<typeof import('../../src/services/location')>()),
@@ -34,6 +39,7 @@ beforeEach(() => {
   vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {}); // jsdom can't navigate to blob: URLs
   vi.mocked(readExif).mockResolvedValue({});
   vi.mocked(reverseGeocode).mockResolvedValue(null);
+  vi.mocked(loadStaticMap).mockResolvedValue(null);
   setGeolocation(undefined);
   vi.mocked(processImage).mockImplementation(async () => ({ blob: new Blob(), downloadUrl: 'blob:out', fileName: 'a_edited.jpg', mimeType: 'image/jpeg' }));
 });
@@ -130,6 +136,15 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: /Export JPG|Exporting/ }));
     await waitFor(() => expect(exportBtn()).toBeEnabled());
     expect(processImage).toHaveBeenCalledTimes(1);
+  });
+
+  it('exports without the map when it is switched off', async () => {
+    await ready();
+    typeCoords('-8.43221', '115.27904');
+    fireEvent.click(screen.getByRole('switch', { name: 'Show map on photo' }));
+    await waitFor(() => expect(exportBtn()).toBeEnabled());
+    fireEvent.click(exportBtn());
+    await waitFor(() => expect(processImage).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ showMap: false })));
   });
 
   it('fills time and location from EXIF', async () => {

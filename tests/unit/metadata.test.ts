@@ -20,7 +20,7 @@ describe('metadata', () => {
     expect(m).toMatchObject({
       timestamp: '2026-11-04T14:32:08', timestampSource: 'capture',
       location: { lat: -8.43221, lng: 115.27904, source: 'exif' }, placeName: null,
-      showCoords: true, showPlace: true, ...DEFAULT_STYLE,
+      showCoords: true, showPlace: true, showMap: true, ...DEFAULT_STYLE,
     });
   });
   it('defaults without EXIF', () => {
